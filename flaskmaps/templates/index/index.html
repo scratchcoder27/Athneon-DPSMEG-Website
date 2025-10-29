@@ -21,14 +21,14 @@
                 <div class="input-group">
                     <div class="input-label">
                         <span>
-                            <img src="{{ url_for('static', filename='start.svg') }}"/>
+                            <img src="{{ url_for('static', filename='/images/start.svg') }}"/>
                         </span>
                         <span>Pickup Location</span>
                     </div>
                     <div class="input-wrapper">
                         <input type="text" id="pickup-search" class="search-input" placeholder="Auto-set to your location">
                         <button class="location-btn" onclick="useCurrentLocation('pickup')" title="Use current location">
-                            <img src="{{ url_for('static', filename='pin.svg') }}"/>
+                            <img src="{{ url_for('static', filename='/images/pin.svg') }}"/>
                         </button>
                         <div id="pickup-suggestions" class="suggestions"></div>
                     </div>
@@ -40,14 +40,14 @@
                 <div class="input-group">
                     <div class="input-label">
                         <span>
-                            <img src="{{ url_for('static', filename='target.svg') }}"/>
+                            <img src="{{ url_for('static', filename='/images/target.svg') }}"/>
                         </span>
                         <span>Drop-off Location</span>
                     </div>
                     <div class="input-wrapper">
                         <input type="text" id="dropoff-search" class="search-input" placeholder="Enter destination">
                         <button class="location-btn" onclick="useCurrentLocation('dropoff')" title="Use current location">
-                            <img src="{{ url_for('static', filename='pin.svg') }}"/>
+                            <img src="{{ url_for('static', filename='/images/pin.svg') }}"/>
                         </button>
                         <div id="dropoff-suggestions" class="suggestions"></div>
                     </div>
@@ -61,7 +61,7 @@
                 <div class="info-panel" id="info-panel">
                     <div class="info-item">
                         <div class="info-icon">
-                            <img src="{{ url_for('static', filename='ruler.svg') }}"/>
+                            <img src="{{ url_for('static', filename='/images/ruler.svg') }}"/>
                         </div>
                         <div class="info-content">
                             <div class="info-label">Distance</div>
@@ -70,7 +70,7 @@
                     </div>
                     <div class="info-item">
                         <div class="info-icon">
-                            <img src="{{ url_for('static', filename='alarm.svg') }}"/>
+                            <img src="{{ url_for('static', filename='/images/alarm.svg') }}"/>
                         </div>
                         <div class="info-content">
                             <div class="info-label">Estimated Time</div>
@@ -87,10 +87,11 @@
                 </label>
                 <span class="toggle-label">Auto-follow location</span>
 
+                <div id="spacer"></div>
                 <div class="dark-mode">
                     <label id="dark-mode-toggle">
-                        <img src="{{ url_for('static', filename='sun.svg') }}"/>
-                        <img hidden src="{{ url_for('static', filename='moon.svg') }}"/>
+                        <img class="dark-mode-toggle-btn" id="toggle-light" src="{{ url_for('static', filename='/images/sun.svg') }}"/>
+                        <img class="dark-mode-toggle-btn" id="toggle-dark" hidden src="{{ url_for('static', filename='/images/moon.svg') }}"/>
                     </label>
                 </div>
             </div>
@@ -107,6 +108,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.js"></script>
+    <script src="{{ url_for('static', filename='map-script.js') }}"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
