@@ -78,7 +78,7 @@
                 map.removeLayer(currentMarker);
             }
             currentMarker = L.marker([lat, lng]).addTo(map).bindPopup('You are here').openPopup();
-            document.getElementById('status').textContent = `📍 Location: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+            document.getElementById('status').textContent = `Location: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
         }
 
         // Update position continuously
@@ -88,7 +88,7 @@
             if (currentMarker) {
                 currentMarker.setLatLng([lat, lng]);
             }
-            document.getElementById('status').textContent = `📍 Location: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+            document.getElementById('status').textContent = `Location: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
         }
 
         // Handle geolocation errors
@@ -342,7 +342,7 @@
                 }),
                 routeWhileDragging: true,
                 lineOptions: {
-                    styles: [{color: '#dc2626', opacity: 0.8, weight: 6}]
+                    styles: [{color: '#2d8d00ff', opacity: 0.8, weight: 6}]
                 },
                 createMarker: function(i, wp, nWps) {
                     return L.marker(wp.latLng, {
@@ -367,3 +367,142 @@
         
         // Start location tracking on page load
         getLocation();
+
+//MARK: Save dialog
+document.addEventListener('DOMContentLoaded', () => {
+    const addBtn = document.getElementById('add-location-button');
+    const dialog = document.getElementById('add-location-dialog');
+    const saveBtn = document.getElementById('save-location');
+    const cancelBtn = document.getElementById('cancel-dialog');
+
+    if (!addBtn) {
+        return;
+    }
+
+    addBtn.addEventListener('click', () => {
+        dialog.showModal();
+    });
+
+    cancelBtn.addEventListener('click', () => {
+        dialog.close();
+    });
+
+    saveBtn.addEventListener('click', async () => {
+        const type = document.getElementById('location-type').value;
+        const name = document.getElementById('location-name').value.trim();
+        let lat, lng;
+
+        if (!name) {
+            alert('Please enter a name.');
+            return;
+        }
+
+        if (type === 'current') {
+            if (!currentMarker) return alert('Current marker not set.');
+            const pos = currentMarker.getLatLng();
+            lat = pos.lat;
+            lng = pos.lng;
+        } else if (type === 'start') {
+            if (!startLocation) return alert('Start location not set.');
+            lat = startLocation.lat;
+            lng = startLocation.lng;
+        } else if (type === 'end') {
+            if (!endLocation) return alert('End location not set.');
+            lat = endLocation.lat;
+            lng = endLocation.lng;
+        }
+
+        try {
+        const res = await fetch('/add_location', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, x: lat, y: lng })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            alert('Location saved!');
+            dialog.close();
+            window.location.reload();
+        } else {
+            alert('Error: ' + (data.error || 'Unknown error'));
+        }
+        } catch (err) {
+        console.error(err);
+        alert('Failed to send location.');
+        }
+    });
+});
+
+//MARK: Load saved locations
+document.addEventListener('DOMContentLoaded', () => {
+  const locationsContainer = document.getElementById('locations');
+  const dialog = document.getElementById('set-location-dialog');
+  const nameDisplay = document.getElementById('selected-location-name');
+  const btnStart = document.getElementById('set-start');
+  const btnEnd = document.getElementById('set-end');
+  const btnDelete = document.getElementById('delete-location');
+
+  let selectedLat = null;
+  let selectedLng = null;
+  let selectedName = '';
+  let selectedId = null;
+  let selectedDiv = null;
+
+  if (!locationsContainer) return;
+
+  // Handle clicking on a location
+  locationsContainer.addEventListener('click', (e) => {
+    const locationDiv = e.target.closest('.location-display');
+    if (!locationDiv) return;
+
+    selectedId = locationDiv.dataset.id;
+    selectedDiv = locationDiv;
+    selectedLat = parseFloat(locationDiv.querySelector('.location-pos-y').textContent);
+    selectedLng = parseFloat(locationDiv.querySelector('.location-pos-x').textContent);
+    selectedName = locationDiv.querySelector('.location-name').textContent.trim();
+
+    nameDisplay.textContent = `Location: ${selectedName}`;
+    dialog.showModal();
+  });
+
+  // Set as Start
+  btnStart.addEventListener('click', () => {
+    startLocation = { lat: selectedLat, lng: selectedLng };
+    const input = document.getElementById('start-input');
+    if (input)
+      input.value = `Saved Location (${selectedLat.toFixed(4)}, ${selectedLng.toFixed(4)})`;
+    hideSuggestions('start');
+    dialog.close();
+  });
+
+  // Set as End
+  btnEnd.addEventListener('click', () => {
+    endLocation = { lat: selectedLat, lng: selectedLng };
+    const input = document.getElementById('end-input');
+    if (input)
+      input.value = `Saved Location (${selectedLat.toFixed(4)}, ${selectedLng.toFixed(4)})`;
+    hideSuggestions('end');
+    dialog.close();
+  });
+
+  // Delete
+  btnDelete.addEventListener('click', async () => {
+    if (!confirm(`Delete "${selectedName}"?`)) return;
+
+    try {
+      const res = await fetch(`/delete_location/${selectedId}`, { method: 'DELETE' });
+      const data = await res.json();
+
+      if (data.success) {
+        selectedDiv.remove();
+        dialog.close();
+      } else {
+        alert('Error: ' + (data.error || 'Unknown error'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Failed to delete location.');
+    }
+  });
+});

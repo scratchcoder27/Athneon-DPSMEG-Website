@@ -459,9 +459,28 @@ body {
         flex-direction: column;
     }
 
+    #bottom-bar {
+        width: 100vw !important;
+        height: 7vh !important;
+    }
+
+    #status {
+        left: 2vw !important;
+        bottom: 8vh !important;
+    }
+
+    .leaflet-control-attribution.leaflet-control {
+        /* bottom: 6vh !important; */
+        display: none !important;
+    }
+
+    #bottom-bar-text {
+        display: none !important;
+    }
+
     #controls {
         width: 100%;
-        max-height: 40vh;
+        max-height: 35vh;
         border-right: none;
         border-bottom: 2px solid var(--border-accent);
         box-shadow: 0 4px 20px var(--shadow-accent);
@@ -600,4 +619,156 @@ body {
   padding-right: 10px;
   padding-top: 1vh;
   margin-right: 12px;
+  box-shadow: 2px 2px 4px var(--text-primary);
+}
+
+#locations {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  flex-grow: 1;
+  flex-direction: row-reverse;
+  flex-wrap: wrap;
+  overflow-y: scroll;
+}
+
+#add-location-button {
+  margin: 3px;
+  margin-right: 11px;
+  color: var(--text-primary);
+  background: var(--bg-gradient-start);
+  border-style: none;
+  padding: 7px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 5px green;
+  transition: 0.5s;
+}
+#add-location-button:hover {
+  color: var(--text-secondary);
+  box-shadow: 0px 0px 10px #006880;
+}
+
+
+#bottom-bar-text {
+  vertical-align: middle;
+  padding-top: 1.6vh;
+  margin-left: 11px;
+  font-family: monospace;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+/* MARK: DIALOG STYLES */
+dialog {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(to bottom right, var(--controls-bg-start), var(--controls-bg-end));
+  color: var(--text-primary);
+  box-shadow: 0 8px 30px var(--shadow-accent);
+  max-width: 360px;
+  width: 90%;
+  font-family: system-ui, sans-serif;
+  animation: fadeIn 0.2s ease-out;
+
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
+}
+
+#add-location-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+#add-location-form label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+#add-location-form input,
+#add-location-form select {
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+#add-location-form input:focus,
+#add-location-form select:focus {
+  background: var(--input-focus-bg);
+  border-color: var(--border-accent);
+  box-shadow: 0 0 0 3px var(--input-focus-shadow);
+  outline: none;
+}
+
+#add-location-form button {
+  background: var(--primary-300);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#add-location-form button:hover {
+  background: var(--primary-400);
+}
+
+#cancel-dialog {
+  background: var(--input-bg);
+  color: var(--text-secondary);
+}
+
+#cancel-dialog:hover {
+  background: var(--input-focus-bg);
+  color: var(--text-primary);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* MARK: For save opening */
+#set-location-dialog {
+  max-width: 25vw;
+  width: 90%;
+  text-align: center;
+}
+
+#set-start, #set-end, #delete-location {
+  background: var(--primary-300);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 0.5vw;
+  cursor: pointer;
+  margin: 1vw;
+  transition: 0.3s;
+}
+
+#set-start:hover , #set-end:hover {
+  background: var(--primary-400);
+}
+
+#delete-location:hover {
+  background: #dc2626;
+}
+
+dialog[open] {
+  pointer-events: auto;
+  z-index: 9999;
 }
