@@ -138,14 +138,23 @@ body {
     transition: background 0.3s ease, border-color 0.3s ease;
 }
 
+#route-info-distance {
+  margin-bottom: 5px;
+}
+
+#route-info-distance, #route-info-time {
+  display: flex;
+  align-items: center;
+}
+
 /* ------------------ THEME TOGGLE BUTTON ------------------ */
 #theme-toggle {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    bottom: 20px;
+    left: 20px;
     width: 50px;
     height: 50px;
-    border-radius: 50%;
+    border-radius: 10px;
     background: linear-gradient(135deg, var(--primary-300) 0%, var(--primary-400) 100%);
     border: none;
     cursor: pointer;
@@ -159,7 +168,7 @@ body {
 }
 
 #theme-toggle:hover {
-    transform: scale(1.1) rotate(15deg);
+    transform: scale(1.2) rotate(5deg);
     box-shadow: 0 6px 20px var(--shadow-accent);
 }
 
@@ -172,7 +181,7 @@ body {
 
 .header h1 {
     font-family: monospace;
-    font-size: 24px;
+    font-size: 3vw;
     color: var(--primary-100);
     margin-bottom: 5px;
 }
@@ -324,6 +333,10 @@ body {
     transition: all 0.3s ease;
     font-size: 13px;
     box-shadow: 0 4px 15px rgba(30, 58, 138, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 
 .poi-btn:hover {
@@ -349,16 +362,20 @@ body {
 }
 
 .map-click-btn {
-    flex: 1;
-    padding: 10px 16px;
-    background: var(--input-bg);
-    color: var(--text-primary);
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 13px;
-    transition: all 0.3s ease;
+    display: flex;
+  align-items: center;           
+  justify-content: center;      
+  gap: 6px;                     
+  flex: 1;
+  padding: 10px 16px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.3s ease;
 }
 
 .map-click-btn:hover {
@@ -457,6 +474,11 @@ body {
 @media (max-width: 768px) {
     #app {
         flex-direction: column;
+    }
+
+    #theme-toggle {
+        bottom: 9vh !important;
+        left: 88vw !important;
     }
 
     #bottom-bar {
@@ -592,8 +614,8 @@ body {
 }
 
 #sign-in-button {
-  color: var(--primary-100);
-  background: var(--bg-gradient-start);
+  color: white;
+  background: var(--border-accent);
   border-radius: 10px;
   padding: 10px;
   border-color: var(--bg-gradient-end);
@@ -605,8 +627,11 @@ body {
   border-color: green;
 }
 
+/* Controls position of sources/attributions */
 .leaflet-control-attribution.leaflet-control {
-  bottom: 1vh;
+    background: var(--bg-gradient-start);
+    border-top-left-radius: 4px;
+    bottom: 1vh;
 }
 
 .location-display {
@@ -619,7 +644,7 @@ body {
   padding-right: 10px;
   padding-top: 1vh;
   margin-right: 12px;
-  box-shadow: 2px 2px 4px var(--text-primary);
+  box-shadow: 0px 0px 4px var(--text-primary);
 }
 
 #locations {

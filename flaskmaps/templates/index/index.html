@@ -61,10 +61,24 @@
                 </select>
                 <button id="calc-btn" class="btn btn-primary">Calculate Route</button>
             </div>
-            <div id="route-info"></div>
+
+            <button id="theme-toggle" title="Toggle Light/Dark Mode" data-sun="{{ url_for('static', filename='images/sun.svg') }}" data-moon="{{ url_for('static', filename='images/moon.svg') }}">
+                <img src="{{ url_for('static', filename='images/moon.svg') }}" alt="Theme Toggle Icon">
+            </button>
+
+            <div id="route-info">
+                <div id="route-info-distance"> <img src="{{ url_for('static', filename='images/ruler.svg') }}" alt="Measurement Icon">
+                    &nbsp;&nbsp;Distance:&nbsp;
+                    <span id="route-distance-value">--</span>
+                </div>
+                <div id="route-info-time"> <img src="{{ url_for('static', filename='images/alarm.svg') }}" alt="Time Icon">
+                    &nbsp;Time: &nbsp;
+                    <span id="route-time-value">--</span>
+                </div>
+            </div>
         </div>
         <div id="map">
-            <button id="theme-toggle" title="Toggle Light/Dark Mode">🌙</button>
+            
         </div>
         </div>
     </div>

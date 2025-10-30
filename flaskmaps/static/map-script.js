@@ -1,3 +1,8 @@
+// ==================== RESET inputs ==================
+document.getElementById('start-input').value = '';
+document.getElementById('end-input').value = '';
+
+
 // ==================== THEME MANAGEMENT ====================
         
         // Get saved theme or default to dark
@@ -34,8 +39,12 @@
         // Update theme toggle button icon
         function updateThemeIcon() {
             const themeToggle = document.getElementById('theme-toggle');
-            themeToggle.innerHTML = currentTheme === 'dark' ? '☀️' : '🌙';
+            const sunIcon = themeToggle.dataset.sun;
+            const moonIcon = themeToggle.dataset.moon;
+            const iconPath = currentTheme === 'dark' ? sunIcon : moonIcon;
+            themeToggle.innerHTML = `<img src="${iconPath}" alt="Theme icon" class="theme-icon">`;
         }
+
         
         updateThemeIcon();
         
@@ -358,7 +367,10 @@
                 const distanceKm = (summary.totalDistance / 1000).toFixed(2);
                 const timeMin = Math.round(summary.totalTime / 60);
                 const routeInfo = document.getElementById('route-info');
-                routeInfo.textContent = `📏 Distance: ${distanceKm} km | ⏱️ Time: ${timeMin} minutes (${mode})`;
+                const distanceSpan = document.getElementById('route-distance-value');
+                const timeSpan = document.getElementById('route-time-value');
+                distanceSpan.textContent = `${distanceKm} km`;
+                timeSpan.textContent = `${timeMin} minutes (${mode})`;
                 routeInfo.classList.add('active');
             });
         }
