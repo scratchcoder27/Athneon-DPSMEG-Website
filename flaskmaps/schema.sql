@@ -1,5 +1,4 @@
 DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS post;
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -7,11 +6,13 @@ CREATE TABLE user (
   password TEXT NOT NULL
 );
 
--- CREATE TABLE post (
---   id INTEGER PRIMARY KEY AUTOINCREMENT,
---   author_id INTEGER NOT NULL,
---   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
---   title TEXT NOT NULL,
---   body TEXT NOT NULL,
---   FOREIGN KEY (author_id) REFERENCES user (id)
--- );
+DROP TABLE IF EXISTS location;
+
+CREATE TABLE location (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  author_id INTEGER NOT NULL,
+  location_x REAL NOT NULL,
+  location_y REAL NOT NULL,
+  name TEXT NOT NULL,
+  FOREIGN KEY (author_id) REFERENCES user (id)
+);

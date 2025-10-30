@@ -3,120 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Route Planner</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.css" />
+    <title>Navigation App</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-   
+
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
 <body>
-    <div class="container">
-        <div class="sidebar">
+    <div id="app">
+        <div id="controls">
+            <!-- Header section -->
             <div class="header">
-                <h1>🗺️ Route Planner</h1>
-                <p>Plan your journey with live location tracking</p>
+                <h1>🗺️ Navigation App</h1>
+                <p>Plan your route with live tracking</p>
             </div>
 
-            <div class="search-section">
+            <div class="location-input">
+                <label for="start-input"> <img src="{{ url_for('static', filename='images/start.svg') }}" alt="Start Icon">
+                     Start Location</label>
                 <div class="input-group">
-                    <div class="input-label">
-                        <span>
-                            <img src="{{ url_for('static', filename='/images/start.svg') }}"/>
-                        </span>
-                        <span>Pickup Location</span>
-                    </div>
-                    <div class="input-wrapper">
-                        <input type="text" id="pickup-search" class="search-input" placeholder="Auto-set to your location">
-                        <button class="location-btn" onclick="useCurrentLocation('pickup')" title="Use current location">
-                            <img src="{{ url_for('static', filename='/images/pin.svg') }}"/>
-                        </button>
-                        <div id="pickup-suggestions" class="suggestions"></div>
-                    </div>
-                    <div class="button-group">
-                        <button class="btn btn-secondary" id="set-pickup">Click Map</button>
-                    </div>
+                    <input type="text" id="start-input" placeholder="Enter start location...">
+                    <button id="start-current-btn" class="btn btn-secondary">Use Current</button>
                 </div>
-
+                <div class="suggestions" id="start-suggestions"></div>
+            </div>
+            <div class="location-input">
+                <label for="end-input"><img src="{{ url_for('static', filename='images/target.svg') }}" alt="Start Icon"> End Location</label>
                 <div class="input-group">
-                    <div class="input-label">
-                        <span>
-                            <img src="{{ url_for('static', filename='/images/target.svg') }}"/>
-                        </span>
-                        <span>Drop-off Location</span>
-                    </div>
-                    <div class="input-wrapper">
-                        <input type="text" id="dropoff-search" class="search-input" placeholder="Enter destination">
-                        <button class="location-btn" onclick="useCurrentLocation('dropoff')" title="Use current location">
-                            <img src="{{ url_for('static', filename='/images/pin.svg') }}"/>
-                        </button>
-                        <div id="dropoff-suggestions" class="suggestions"></div>
-                    </div>
-                    <div class="button-group">
-                        <button class="btn btn-secondary" id="set-dropoff">Click Map</button>
-                    </div>
+                    <input type="text" id="end-input" placeholder="Enter end location...">
+                    <button id="end-current-btn" class="btn btn-secondary">Use Current</button>
                 </div>
-
-                <button class="calculate-btn" id="calculate-route">Calculate Route</button>
-
-                <div class="info-panel" id="info-panel">
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <img src="{{ url_for('static', filename='/images/ruler.svg') }}"/>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-label">Distance</div>
-                            <div class="info-value" id="distance">-</div>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <img src="{{ url_for('static', filename='/images/alarm.svg') }}"/>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-label">Estimated Time</div>
-                            <div class="info-value" id="time">-</div>
-                        </div>
-                    </div>
-                </div>
+                <div class="suggestions" id="end-suggestions"></div>
             </div>
 
-            <div class="toggle-section">
-                <label class="toggle">
-                    <input type="checkbox" id="follow-location" checked>
-                    <span class="toggle-slider"></span>
-                </label>
-                <span class="toggle-label">Auto-follow location</span>
-
-                <div id="spacer"></div>
-                <div class="dark-mode">
-                    <label id="dark-mode-toggle">
-                        <img class="dark-mode-toggle-btn" id="toggle-dark" src="{{ url_for('static', filename='/images/moon.svg') }}"/>
-                        <img class="dark-mode-toggle-btn" id="toggle-light" hidden src="{{ url_for('static', filename='/images/sun.svg') }}"/>
-                    </label>
-                </div>
+            <div class="map-click-buttons">
+                <button class="map-click-btn" id="set-start-map">
+                    <img src="{{ url_for('static', filename='images/pin.svg') }}" id="Before-text" alt="Start Icon">
+                    <label id="after-img">Set Start on Map</label>
+                </button>
+                <button class="map-click-btn" id="set-end-map">
+                    <img src="{{ url_for('static', filename='images/pin.svg') }}" id="Before-text" alt="End Icon">
+                    <label id="after-img">Set End on Map</label>
+                </button>
             </div>
+
+            <div id="poi-buttons">
+                <button class="poi-btn" data-type="hospital"><img src="{{ url_for('static', filename='images/hospital.svg') }}" alt="Hospital Icon"> Hospital</button>
+                <button class="poi-btn" data-type="atm"><img src="{{ url_for('static', filename='images/atm.svg') }}" alt="ATM Icon"> ATM</button>
+                <button class="poi-btn" data-type="fuel"><img src="{{ url_for('static', filename='images/petrol.svg') }}" alt="Petrol Icon"> Petrol Pump</button>
+            </div>
+
+            <div class="controls-row">
+                <select id="mode-select">
+                    <option value="driving">🚗 Car</option>
+                    <option value="cycling">🏍️ Two-Wheeler</option>
+                </select>
+                <button id="calc-btn" class="btn btn-primary">Calculate Route</button>
+            </div>
+            <div id="route-info"></div>
         </div>
-
-        <div class="directions" id="directions-list">
-
+        <div id="map">
+            <button id="theme-toggle" title="Toggle Light/Dark Mode">🌙</button>
         </div>
-
-        <div class="map-container">
-            <div class="location-badge" id="location-status">
-                <span class="status-dot"></span>
-                <span>Tracking...</span>
-            </div>
-            <div id="map"></div>
         </div>
     </div>
 
-    <script>
-        window.SERVER_URL = "{{ request.host_url.rstrip('/') }}";
-    </script>
+    <div id="status">Getting your location...</div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.js"></script>
+    <div id="bottom-bar">
+        <button id="sign-in-button">Sign in</div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
     <script src="{{ url_for('static', filename='map-script.js') }}"></script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+    </script>
 </body>
 </html>
