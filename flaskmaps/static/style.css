@@ -402,7 +402,7 @@ body {
   display: block;
   position: fixed;
   left: 37vw;
-  bottom: 6vh;
+  bottom: 7vh;
   z-index: 400;
   font-family: monospace;
   border-radius: 20px;
@@ -555,4 +555,49 @@ body {
 
 .leaflet-routing-alt:hover {
     background: var(--border-color) !important;
+}
+
+#bottom-bar {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  height: 6vh;
+  z-index: 400;
+  background: linear-gradient(135deg, var(--controls-bg-start) 0%, var(--controls-bg-end) 100%);
+  width: 65vw;
+  border-top: solid green 2px;
+  padding: 5px;
+  display: flex;
+  flex-direction: row-reverse;
+  cursor: pointer;
+}
+
+#sign-in-button {
+  color: var(--primary-100);
+  background: var(--bg-gradient-start);
+  border-radius: 10px;
+  padding: 10px;
+  border-color: var(--bg-gradient-end);
+  cursor: pointer;
+  transition: 1s;
+}
+
+#sign-in-button:hover {
+  border-color: green;
+}
+
+.leaflet-control-attribution.leaflet-control {
+  bottom: 1vh;
+}
+
+.location-display {
+  border-style: solid;
+  border-width: thin;
+  border-radius: 10px;
+  padding-bottom: 1vh;
+  padding-left: 10px;
+  text-align: center;
+  padding-right: 10px;
+  padding-top: 1vh;
+  margin-right: 12px;
 }

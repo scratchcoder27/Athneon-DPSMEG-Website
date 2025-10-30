@@ -72,12 +72,36 @@
     <div id="status">Getting your location...</div>
 
     <div id="bottom-bar">
-        <button id="sign-in-button">Sign in</div>
+        {% if g.user %}
+            <button id="sign-in-button" onclick='location.href = "{{url_for('auth.logout')}}"'>Sign Out</button>
+        {% else %}
+            <button id="sign-in-button" onclick='location.href = "{{url_for('auth.login')}}"'>Sign in</button>
+        {% endif %}
+
+        <!-- <div id="locations">
+            <div class="location-display">
+                <div class="location-name">Test</div>
+                <div class="location-pos-x" hidden>5.2344</div>
+                <div class="location-pos-y" hidden>123.123</div>
+            </div>
+            
+            <div class="location-display">
+                <div class="location-name">Test</div>
+                <div class="location-pos-x" hidden>5.2344</div>
+                <div class="location-pos-y" hidden>123.123</div>
+            </div>
+            <div class="location-display">
+                <div class="location-name">Test</div>
+                <div class="location-pos-x" hidden>5.2344</div>
+                <div class="location-pos-y" hidden>123.123</div>
+            </div>
+        </div> -->
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
     <script src="{{ url_for('static', filename='map-script.js') }}"></script>
+
     <script>
     </script>
 </body>
