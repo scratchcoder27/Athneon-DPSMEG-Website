@@ -1,4 +1,4 @@
-const map = L.map('map').setView([51.505, -0.09], 13);
+const map = L.map('map').setView([28.7041, 77.1025], 13);
 
 // Define both tile layers
 const darkLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {

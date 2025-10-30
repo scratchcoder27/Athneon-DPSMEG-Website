@@ -392,7 +392,7 @@ body {
 }
 
 .dark-mode-toggle-btn#toggle-light {
-    background-color: rgb(240, 240, 240);
+    background-color: rgb(0, 0, 0);
     /* border: rgb(56, 56, 56) solid 2px; */
     border-radius: 25%;
     padding: 25%;
@@ -400,7 +400,7 @@ body {
 }
 
 .dark-mode-toggle-btn#toggle-dark {
-    background-color: rgba(255, 255, 255, 0.158);
+    background-color: #cabcbc28;
     /* border: rgb(202, 202, 202) solid 2px; */
     border-radius: 25%;
     padding: 25%;
