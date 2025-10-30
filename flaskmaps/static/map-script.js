@@ -1,16 +1,30 @@
 const map = L.map('map').setView([51.505, -0.09], 13);
 
-L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
-}).addTo(map);
+// Define both tile layers
+const darkLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
+  attribution: '© Carto DB'
+});
 
-// L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-//     attribution: '© OpenStreetMap contributors'
-// }).addTo(map);
+const lightLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+});
 
-// L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-//     attribution: '© OpenStreetMap contributors'
-// }).addTo(map);
+// Default to dark
+lightLayer.addTo(map);
+
+// Export a function to switch map theme
+function setMapTheme(mode) {
+  if (mode === "light") {
+    if (map.hasLayer(darkLayer)) map.removeLayer(darkLayer);
+    lightLayer.addTo(map);
+  } else {
+    if (map.hasLayer(lightLayer)) map.removeLayer(lightLayer);
+    darkLayer.addTo(map);
+  }
+}
+
+// Make it accessible to other scripts (important!)
+window.setMapTheme = setMapTheme;
 
 let userMarker = null;
 let routeControl = null;
