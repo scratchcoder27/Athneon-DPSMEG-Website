@@ -37,9 +37,15 @@ let settingDropoff = false;
 let followLocation = true;
 let debounceTimer = null;
 
+const markerIconGreen = 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png';
+const markerIconRed = 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png';
+const markerIconBlue = 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png';
+const markerShadow = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png';
+
+
 const pickupIcon = L.icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconUrl: markerIconGreen,
+    shadowUrl: markerShadow,
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
@@ -47,8 +53,8 @@ const pickupIcon = L.icon({
 });
 
 const dropoffIcon = L.icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconUrl: markerIconRed,
+    shadowUrl: markerShadow,
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
@@ -65,9 +71,9 @@ function updateUserLocation(position) {
     } else {
         userMarker = L.marker(userLatLng, {
             icon: L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
-                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                iconSize: [25, 41],
+                iconUrl: markerIconBlue,
+                shadowUrl: markerShadow,
+                iconSize: [20, 36],
                 iconAnchor: [12, 41],
                 popupAnchor: [1, -34],
                 shadowSize: [41, 41]
@@ -95,7 +101,7 @@ if (navigator.geolocation) {
         document.getElementById('location-status').innerHTML = '<span>❌</span><span>Location error</span>';
     }, {
         enableHighAccuracy: true,
-        timeout: 1000,
+        timeout: 3000,
         maximumAge: 0
     });
 } else {
@@ -107,31 +113,81 @@ document.getElementById('follow-location').addEventListener('change', function()
 });
 
 function createRoute(fromLatLng, toLatLng) {
-    if (routeControl) {
-        map.removeControl(routeControl);
+    if (!fromLatLng || !toLatLng) {
+        console.error('Missing coordinates:', fromLatLng, toLatLng);
+        return;
     }
-    routeControl = L.Routing.control({
-        waypoints: [
-            L.latLng(fromLatLng),
-            L.latLng(toLatLng)
-        ],
-        routeWhileDragging: false,
-        createMarker: function() { return null; },
-        lineOptions: {
-            styles: [{ color: '#667eea', weight: 5, opacity: 0.7 }]
-        }
-    }).addTo(map);
 
-    routeControl.on('routesfound', function(e) {
-        const routes = e.routes;
-        const summary = routes[0].summary;
-        const distanceKm = (summary.totalDistance / 1000).toFixed(2);
-        const timeMinutes = Math.round(summary.totalTime / 60);
-        document.getElementById('distance').textContent = `${distanceKm} km`;
-        document.getElementById('time').textContent = `${timeMinutes} minutes`;
-        document.getElementById('info-panel').classList.add('active');
-    });
-}
+    // Handle both LatLng objects and arrays
+    const fromLat = fromLatLng.lat ?? fromLatLng[0];
+    const fromLng = fromLatLng.lng ?? fromLatLng[1];
+    const toLat = toLatLng.lat ?? toLatLng[0];
+    const toLng = toLatLng.lng ?? toLatLng[1];
+
+    // OSRM expects "lon,lat"
+    const start = `${fromLng},${fromLat}`;
+    const end = `${toLng},${toLat}`;
+
+    // Use SERVER_URL if set, else relative
+    const baseURL = window.SERVER_URL ? window.SERVER_URL.replace(/\/$/, '') : '';
+    // This URL now hits your backend, which should be requesting steps=true
+    const url = `${baseURL}/api/route?start=${start}&end=${end}`;
+
+    fetch(url)
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+        })
+        .then(data => {
+            if (!data.routes?.length) {
+                alert('No route found!');
+                return;
+            }
+
+            const route = data.routes[0];
+            const coordinates = route.geometry.coordinates.map(c => [c[1], c[0]]);
+
+            if (window.routeLine) map.removeLayer(window.routeLine);
+
+            window.routeLine = L.polyline(coordinates, {
+                color: '#26e083',
+                weight: 5,
+                opacity: 0.8
+            }).addTo(map);
+
+            const distanceKm = (route.distance / 1000).toFixed(2);
+            const timeMinutes = Math.round(route.duration / 60);
+
+            document.getElementById('distance').textContent = `${distanceKm} km`;
+            document.getElementById('time').textContent = `${timeMinutes} minutes`;
+            document.getElementById('info-panel').classList.add('active');
+
+            // --- START: NEW CODE FOR DIRECTIONS ---
+
+            // 1. Get the container you added to your HTML
+            const directionsContainer = document.getElementById('directions-list');
+            
+            directionsContainer.innerHTML = '';
+            const steps = route.legs[0].steps;
+
+            const list = document.createElement('ol');
+
+            steps.forEach(step => {
+                const li = document.createElement('li');
+                // 'instruction' holds the text like "Turn left onto Main Street"
+                li.textContent = step.maneuver.instruction;
+                list.appendChild(li);
+            });
+
+            directionsContainer.appendChild(list);-
+
+            map.fitBounds(window.routeLine.getBounds(), { padding: [30, 30] });
+        })
+        .catch(err => {
+            console.error('Route fetch failed:', err);
+            alert('Failed to get route.');
+        });
+    }
 
 map.on('click', function(e) {
     const latlng = e.latlng;

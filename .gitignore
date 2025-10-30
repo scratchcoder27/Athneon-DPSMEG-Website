@@ -5,3 +5,4 @@ instance/*
 .DS_Store
 *.log
 *.pyc
+temp/*

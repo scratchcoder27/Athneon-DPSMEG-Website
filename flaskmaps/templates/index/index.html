@@ -97,6 +97,10 @@
             </div>
         </div>
 
+        <div class="directions" id="directions-list">
+
+        </div>
+
         <div class="map-container">
             <div class="location-badge" id="location-status">
                 <span class="status-dot"></span>
@@ -105,6 +109,10 @@
             <div id="map"></div>
         </div>
     </div>
+
+    <script>
+        window.SERVER_URL = "{{ request.host_url.rstrip('/') }}";
+    </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.js"></script>
